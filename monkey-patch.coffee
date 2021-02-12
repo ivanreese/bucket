@@ -188,6 +188,13 @@ do ()->
         return false
 
 
+    String:
+
+      pluralize: (count, string, suffix = "s")->
+        suffix = "" if count is 1
+        (string + suffix).replace("%%", count)
+
+
   # Init
 
   for className, classPatches of monkeyPatches
