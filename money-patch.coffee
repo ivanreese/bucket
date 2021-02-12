@@ -158,6 +158,11 @@ do ()->
           return false
         return true
 
+
+      isObject: (obj)->
+        "[object Object]" is Object.prototype.toString.call obj
+
+
       merge: (objs...)->
         out = {}
         for obj in objs
