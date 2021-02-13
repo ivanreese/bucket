@@ -72,7 +72,9 @@ do ()->
 
 
     Function:
+
       exists: (e)-> e?
+
 
     Math:
 
@@ -158,10 +160,11 @@ do ()->
           return false
         return true
 
-
       isObject: (obj)->
         "[object Object]" is Object.prototype.toString.call obj
 
+      length: (obj)->
+        Object.keys(obj).length
 
       merge: (objs...)->
         out = {}
