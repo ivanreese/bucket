@@ -145,6 +145,9 @@ do ()->
         else
           throw "Can't clone non-object"
 
+      count: (obj)->
+        Object.keys(obj).length
+
       equal: (a, b)->
         return true if Object.is a, b
         return false unless (a? and b?) and ({}.constructor is a.constructor is b.constructor)
@@ -162,9 +165,6 @@ do ()->
 
       isObject: (obj)->
         "[object Object]" is Object.prototype.toString.call obj
-
-      length: (obj)->
-        Object.keys(obj).length
 
       merge: (objs...)->
         out = {}
