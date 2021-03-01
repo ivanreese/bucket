@@ -6,7 +6,7 @@ Take [], ()->
     fns[fn] = false
     fn()
 
-  Debounced = (delay, fn)-> ()->
+  Make "Debounced", Debounced = (delay, fn)-> ()->
     fn = delay unless fn? # Delay might not be given
     unless fns[fn]
       fns[fn] = true
@@ -14,5 +14,3 @@ Take [], ()->
         requestAnimationFrame run fn
       else
         setTimeout run(fn), delay
-
-  Make "Debounced", Debounced
