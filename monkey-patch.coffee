@@ -201,7 +201,7 @@ do ()->
   # Init
 
   for className, classPatches of monkeyPatches
-    globalclass = window[className]
+    globalclass = globalThis[className]
     for key, value of classPatches
       if globalclass[key]?
         console.log "Can't monkey patch #{className}.#{key} because it already exists."
