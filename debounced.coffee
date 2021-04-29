@@ -11,6 +11,6 @@ Take [], ()->
     unless fns[fn]
       fns[fn] = true
       if delay is fn # Delay was not given
-        requestAnimationFrame run fn
+        queueMicrotask run fn
       else
         setTimeout run(fn), delay
