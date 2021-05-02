@@ -197,6 +197,9 @@ do ()->
         suffix = "" if count is 1
         (string + suffix).replace("%%", count)
 
+      toKebabCase: (v)->
+        v.replace(/([A-Z])/g,"-$1").toLowerCase()
+
 
   # Init
 
