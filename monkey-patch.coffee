@@ -74,6 +74,9 @@ do ()->
     Function:
 
       exists: (e)-> e?
+      notExists: (e)-> !e?
+      is: (a, b)-> a is b
+      isnt: (a, b)-> a isnt b
 
 
     Math:
