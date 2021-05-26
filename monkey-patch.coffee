@@ -67,6 +67,12 @@ do ()->
             return true if Object.search v, key
         return false
 
+      shuffle: (arr)->
+        newArr = []
+        for item, i in arr
+          newArr.splice Math.randInt(0, newArr.length), 0, item
+        return newArr
+
       unique: (elements)->
         Array.from new Set [].concat elements
 
@@ -112,6 +118,7 @@ do ()->
         return Math.lerpN input, outputMin, outputMax, false
 
       rand: (min = -1, max = 1)-> Math.lerpN Math.random(), min, max
+      randInt: (min, max)-> Math.round Math.rand min, max
 
       roundTo: (input, precision)->
         # Using the reciprocal avoids floating point errors. Eg: 3/10 is fine, but 3*0.1 is wrong.
