@@ -1,16 +1,18 @@
 Take [], ()->
 
-  fns = new Map()
+  waiting = new Map()
 
   run = (fn)-> ()->
-    fns[fn] = false
-    fn()
+    args = waiting.get fn
+    waiting.delete fn
+    fn ...args
 
-  Make "Debounced", Debounced = (delay, fn)-> ()->
+  Make "Debounced", Debounced = (delay, fn)-> (...args)->
     fn = delay unless fn? # Delay might not be given
-    unless fns[fn]
-      fns[fn] = true
+    unless waiting.has fn
       if delay is fn # Delay was not given
         queueMicrotask run fn
       else
         setTimeout run(fn), delay
+    waiting.set fn, args # save the most recently provided args
+    null
