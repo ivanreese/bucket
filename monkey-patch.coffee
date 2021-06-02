@@ -39,17 +39,14 @@ do ()->
         return false unless (a? and b?) and (a instanceof Array and b instanceof Array) and (a.length is b.length)
         for ai, i in a
           bi = b[i]
-          if Object.is ai, bi
+          if Function.equal ai, bi
             continue
-          else if ai instanceof Array and bi instanceof Array
-            continue if Array.equal ai, bi
-          else if ai instanceof Object and bi instanceof Object
-            continue if Object.equal ai, bi
-          return false
+          else
+            return false
         return true
 
-      last: (arr)->
-        arr[arr.length-1]
+      first: (arr)-> arr[0]
+      last: (arr)-> arr[arr.length-1]
 
       pull: (arr, elms)->
         return unless arr? and elms?
@@ -83,6 +80,19 @@ do ()->
       notExists: (e)-> !e?
       is: (a, b)-> a is b
       isnt: (a, b)-> a isnt b
+      equal: (a, b)->
+        if Object.is a, b
+          true
+        else if a instanceof Array and b instanceof Array
+          true if Array.equal a, b
+        else if a instanceof Object and b instanceof Object
+          true if Object.equal a, b
+        else
+          false
+      equivalent: (a, b)-> a == b or Function.equal a, b # Like equal, but also equates null & undefined, -0 & 0, etc
+      notEqual: (a, b)-> !Function.equal a, b
+      notEquivalent: (a, b)-> !Function.equivalent a, b
+
 
 
     Math:
@@ -153,7 +163,7 @@ do ()->
               v
           out
         else
-          throw "Can't clone non-object"
+          throw Error "Can't clone non-object"
 
       count: (obj)->
         Object.keys(obj).length
@@ -164,13 +174,10 @@ do ()->
         return false unless Object.keys(a).length is Object.keys(b).length
         for k, av of a
           bv = b[k]
-          if Object.is av, bv
+          if Function.equal av, bv
             continue
-          else if av instanceof Array and bv instanceof Array
-            continue if Array.equal av, bv
-          else if av instanceof Object and bv instanceof Object
-            continue if Object.equal av, bv
-          return false
+          else
+            return false
         return true
 
       isObject: (obj)->
@@ -202,6 +209,21 @@ do ()->
 
 
     String:
+
+      # https://stackoverflow.com/a/52171480/313576
+      hash: (str, seed = 0)->
+        return 0 unless str?
+        h1 = 0xdeadbeef ^ seed
+        h2 = 0x41c6ce57 ^ seed
+        for c in str
+          ch = c.charCodeAt 0
+          h1 = Math.imul h1 ^ ch, 2654435761
+          h2 = Math.imul h2 ^ ch, 1597334677
+        h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909)
+        h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909)
+        return 4294967296 * (2097151 & h2) + (h1>>>0)
+
+      isString: (str)-> typeof str is "string"
 
       pluralize: (count, string, suffix = "s")->
         suffix = "" if count is 1

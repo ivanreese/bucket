@@ -19,11 +19,8 @@ Take [], ()->
     transitions[from][to].push cb
 
 
-  StateMachine = (a, b, c)->
-    return state                      unless a?  # 0 arity
-    return transition a               unless b?  # 1 arity
-    throw "Invalid StateMachine Call" unless c?  # 2 arity
-    addTransition a, b, c                        # 3 arity
-
-
-  Make "StateMachine", StateMachine
+  Make "StateMachine", StateMachine = (a, b, c)->
+    return state                            unless a?  # 0 arity
+    return transition a                     unless b?  # 1 arity
+    throw Error "Invalid StateMachine Call" unless c?  # 2 arity
+    addTransition a, b, c                              # 3 arity
