@@ -13,6 +13,13 @@ do ()->
       sortNumericAscending: (arr)-> arr.sort Array.numericSortAscending
       sortNumericDescending: (arr)-> arr.sort Array.numericSortDescending
 
+      # Accessing
+      first: (arr)-> arr[0]
+      second: (arr)-> arr[1]
+      last: (arr)-> arr[arr.length-1]
+      rest: (arr)-> arr[1...]
+      butLast: (arr)-> arr[...-1]
+
       # Misc
 
       clone: (arr)->
@@ -44,9 +51,6 @@ do ()->
           else
             return false
         return true
-
-      first: (arr)-> arr[0]
-      last: (arr)-> arr[arr.length-1]
 
       pull: (arr, elms)->
         return unless arr? and elms?
