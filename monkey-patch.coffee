@@ -189,12 +189,14 @@ do ()->
 
       merge: (objs...)->
         out = {}
-        for obj in objs
+        for obj in objs when obj?
           for k, v of obj
             if v instanceof Function
               out[k] = v
+            else if v instanceof Array
+              throw "Object.merge doesn't handle Arrays yet"
             else if v instanceof Object
-              out[k] = Object.clone v
+              out[k] = Object.merge out[k], v
             else
               out[k] = v
         out
