@@ -7,13 +7,12 @@ Take [], ()->
     waiting.delete fn
     fn ...args
 
-  Make.async "Debounced", Debounced = (delay, fn)-> (...args)->
-    fn = delay unless fn? # Delay might not be given
+  Make.async "Debounced", Debounced = (...[delay], fn)-> (...args)->
     unless waiting.has fn
-      if delay is fn # Delay was not given
-        queueMicrotask run fn
-      else
+      if delay?
         setTimeout run(fn), delay
+      else
+        queueMicrotask run fn
     waiting.set fn, args # save the most recently provided args
     null
 

@@ -93,7 +93,7 @@ do ()->
           true if Object.equal a, b
         else
           false
-      equivalent: (a, b)-> a == b or Function.equal a, b # Like equal, but also equates null & undefined, -0 & 0, etc
+      equivalent: (a, b)-> `a == b` or Function.equal a, b # Like equal, but also equates null & undefined, -0 & 0, etc
       notEqual: (a, b)-> !Function.equal a, b
       notEquivalent: (a, b)-> !Function.equivalent a, b
 
@@ -191,14 +191,14 @@ do ()->
         out = {}
         for obj in objs when obj?
           for k, v of obj
-            if v instanceof Function
-              out[k] = v
-            else if v instanceof Array
-              throw "Object.merge doesn't handle Arrays yet"
-            else if v instanceof Object
-              out[k] = Object.merge out[k], v
+            # DO NOT add any additional logic for merging other types (like arrays),
+            # or existing apps will break (Hyperzine, Hest, etc.)
+            # If you want to deep merge other types, write a custom merge function
+            # inside your program itself.
+            out[k] = if Object.isObject v
+              Object.merge out[k], v
             else
-              out[k] = v
+              v
         out
 
       rmerge: (objs...)->
