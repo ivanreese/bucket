@@ -10,6 +10,7 @@ do ()->
       # Sorting
       numericSortAscending: (a, b)-> a - b
       numericSortDescending: (a, b)-> b - a
+      sortAlphabetic: (arr)-> arr.sort Array.alphabeticSort ?= new Intl.Collator('en').compare
       sortNumericAscending: (arr)-> arr.sort Array.numericSortAscending
       sortNumericDescending: (arr)-> arr.sort Array.numericSortDescending
 
@@ -114,7 +115,7 @@ do ()->
 
       avg: (a, b)-> (a + b)/2
 
-      clip: (v, min = 0, max = 1)-> Math.min max, Math.max min, v
+      clip: (v, ...[min = 0], max = 1)-> Math.min max, Math.max min, v
       sat: (v) -> Math.clip v
 
       lerpN: (input, outputMin = 0, outputMax = 1, clip = false)->
