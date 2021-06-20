@@ -6,6 +6,7 @@ do ()->
   monkeyPatches =
 
     Array:
+      type: (v)-> v instanceof Array
 
       # Sorting
       numericSortAscending: (a, b)-> a - b
@@ -24,7 +25,7 @@ do ()->
       # Misc
 
       clone: (arr)->
-        unless arr instanceof Array
+        unless Array.type arr
           Object.clone arr
         else
           for v, i in arr
@@ -32,9 +33,9 @@ do ()->
               v
             else if v.id? # This is a reference to another scene object, so don't clone it
               v
-            else if v instanceof Array
+            else if Array.type v
               Array.clone v
-            else if v instanceof Object
+            else if Object.type v
               Object.clone v
             else
               v
@@ -44,7 +45,7 @@ do ()->
 
       equal: (a, b)->
         return true if Object.is a, b
-        return false unless (a? and b?) and (a instanceof Array and b instanceof Array) and (a.length is b.length)
+        return false unless Array.type(a) and Array.type(b) and a.length is b.length
         for ai, i in a
           bi = b[i]
           if Function.equal ai, bi
@@ -55,7 +56,7 @@ do ()->
 
       pull: (arr, elms)->
         return unless arr? and elms?
-        elms = [elms] unless elms instanceof Array
+        elms = [elms] unless Array.type elms
         for elm in elms
           while (i = arr.indexOf elm) > -1
             arr.splice i, 1
@@ -63,9 +64,9 @@ do ()->
 
       search: (arr, key)->
         for v in arr
-          if v instanceof Array
+          if Array.type v
             return true if Array.search v, key
-          else if v instanceof Object
+          else if Object.type v
             return true if Object.search v, key
         return false
 
@@ -80,6 +81,7 @@ do ()->
 
 
     Function:
+      type: (v)-> v instanceof Function
 
       exists: (e)-> e?
       notExists: (e)-> !e?
@@ -88,9 +90,9 @@ do ()->
       equal: (a, b)->
         if Object.is a, b
           true
-        else if a instanceof Array and b instanceof Array
+        else if Array.type(a) and Array.type(b)
           true if Array.equal a, b
-        else if a instanceof Object and b instanceof Object
+        else if Object.type(a) and Object.type(b)
           true if Object.equal a, b
         else
           false
@@ -142,6 +144,7 @@ do ()->
 
 
     Object:
+      type: (v)-> "[object Object]" is Object.prototype.toString.call v
 
       by: (key, arr)->
         out = {}
@@ -149,9 +152,9 @@ do ()->
         return out
 
       clone: (obj)->
-        if obj instanceof Array
+        if Array.type obj
           Array.clone obj
-        else if obj instanceof Object
+        else if Object.type obj
           out = {}
           for k, v of obj
             out[k] = if not v?
@@ -160,9 +163,9 @@ do ()->
               v
             else if v instanceof Function
               v
-            else if v instanceof Array
+            else if Array.type v
               Array.clone v
-            else if v instanceof Object
+            else if Object.type v
               Object.clone v
             else
               v
@@ -185,8 +188,8 @@ do ()->
             return false
         return true
 
-      isObject: (obj)->
-        "[object Object]" is Object.prototype.toString.call obj
+      # Deprecated
+      isObject: (obj)-> Object.type obj
 
       merge: (objs...)->
         out = {}
@@ -196,7 +199,7 @@ do ()->
             # or existing apps will break (Hyperzine, Hest, etc.)
             # If you want to deep merge other types, write a custom merge function
             # inside your program itself.
-            out[k] = if Object.isObject v
+            out[k] = if Object.type v
               Object.merge out[k], v
             else
               v
@@ -208,14 +211,15 @@ do ()->
       search: (obj, key)->
         return true if obj[key]?
         for k, v of obj
-          if v instanceof Array
+          if Array.type v
             return true if Array.search v, key
-          else if v instanceof Object
+          else if Object.type v
             return true if Object.search v, key
         return false
 
 
     String:
+      type: (v)-> "string" is typeof v
 
       # https://stackoverflow.com/a/52171480/313576
       hash: (str, seed = 0)->
