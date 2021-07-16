@@ -54,6 +54,11 @@ do ()->
             return false
         return true
 
+      mapToObject: (arr, fn = Function.identity)->
+        o = {}
+        o[k] = fn k for k in arr
+        o
+
       pull: (arr, elms)->
         return unless arr? and elms?
         elms = [elms] unless Array.type elms
@@ -82,6 +87,7 @@ do ()->
 
     Function:
       type: (v)-> v instanceof Function
+      identity: (v)-> v
 
       exists: (e)-> e?
       notExists: (e)-> !e?
@@ -188,8 +194,15 @@ do ()->
             return false
         return true
 
-      # Deprecated
-      isObject: (obj)-> Object.type obj
+      mapKeys: (obj, fn = Function.identity)->
+        o = {}
+        o[k] = fn k for k of obj
+        o
+
+      mapValues: (obj, fn = Function.identity)->
+        o = {}
+        o[k] = fn v for k, v of obj
+        o
 
       merge: (objs...)->
         out = {}
@@ -233,8 +246,6 @@ do ()->
         h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909)
         h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909)
         return 4294967296 * (2097151 & h2) + (h1>>>0)
-
-      isString: (str)-> typeof str is "string"
 
       pluralize: (count, string, suffix = "s")->
         suffix = "" if count is 1
