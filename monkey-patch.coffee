@@ -25,20 +25,7 @@ do ()->
       # Misc
 
       clone: (arr)->
-        unless Array.type arr
-          Object.clone arr
-        else
-          for v, i in arr
-            if not v?
-              v
-            else if v.id? # This is a reference to another scene object, so don't clone it
-              v
-            else if Array.type v
-              Array.clone v
-            else if Object.type v
-              Object.clone v
-            else
-              v
+        arr.map Function.clone
 
       empty: (arr)->
         not arr? or arr.length is 0
@@ -106,6 +93,19 @@ do ()->
       notEqual: (a, b)-> !Function.equal a, b
       notEquivalent: (a, b)-> !Function.equivalent a, b
 
+      clone: (v)->
+        if not v?
+          v
+        else if v instanceof Function
+          throw new Error "If you need to clone functions, use a custom cloner"
+        else if v instanceof Promise
+          throw new Error "If you need to clone promises, use a custom cloner"
+        else if Array.type v
+          Array.clone v
+        else if Object.type v
+          Object.clone v
+        else
+          v
 
 
     Math:
@@ -158,26 +158,7 @@ do ()->
         return out
 
       clone: (obj)->
-        if Array.type obj
-          Array.clone obj
-        else if Object.type obj
-          out = {}
-          for k, v of obj
-            out[k] = if not v?
-              v
-            else if v.id? # This is a reference to another scene object, so don't clone it
-              v
-            else if v instanceof Function
-              v
-            else if Array.type v
-              Array.clone v
-            else if Object.type v
-              Object.clone v
-            else
-              v
-          out
-        else
-          throw Error "Can't clone non-object"
+        Object.mapValues obj, Function.clone
 
       count: (obj)->
         Object.keys(obj).length
@@ -210,8 +191,7 @@ do ()->
           for k, v of obj
             # DO NOT add any additional logic for merging other types (like arrays),
             # or existing apps will break (Hyperzine, Hest, etc.)
-            # If you want to deep merge other types, write a custom merge function
-            # inside your program itself.
+            # If you want to deep merge other types, write a custom merge function.
             out[k] = if Object.type v
               Object.merge out[k], v
             else
@@ -234,7 +214,7 @@ do ()->
     String:
       type: (v)-> "string" is typeof v
 
-      # https://stackoverflow.com/a/52171480/313576
+      # https://stackoverflow.com/a/52171480/313576, public domain
       hash: (str, seed = 0)->
         return 0 unless str?
         h1 = 0xdeadbeef ^ seed
