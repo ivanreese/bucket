@@ -210,6 +210,11 @@ do ()->
             return true if Object.search v, key
         return false
 
+    Promise:
+      type: (v)-> v instanceof Promise
+
+      timeout: (t)-> new Promise (resolve)-> setTimeout resolve, t
+
 
     String:
       type: (v)-> "string" is typeof v
