@@ -96,9 +96,9 @@ do ()->
       clone: (v)->
         if not v?
           v
-        else if v instanceof Function
+        else if Function.type v
           throw new Error "If you need to clone functions, use a custom cloner"
-        else if v instanceof Promise
+        else if Promise.type v
           throw new Error "If you need to clone promises, use a custom cloner"
         else if Array.type v
           Array.clone v
@@ -152,10 +152,12 @@ do ()->
     Object:
       type: (v)-> "[object Object]" is Object.prototype.toString.call v
 
-      by: (key, arr)->
-        out = {}
-        out[obj.id] = obj for obj in arr
-        return out
+      # This should probably be a function on Array, as a mirror of Object.keys / Object.values.
+      # In general, functions that take an array go on Array, even if they return a different type.
+      by: (k, arr)-> # Object.by "name", [{name:"a"}, {name:"b"}] => {a:{name:"a"}, b:{name:"b"}}
+        o = {}
+        o[obj[k]] = obj for obj in arr
+        return o
 
       clone: (obj)->
         Object.mapValues obj, Function.clone
@@ -209,6 +211,12 @@ do ()->
           else if Object.type v
             return true if Object.search v, key
         return false
+
+      subtractKeys: (a, b)->
+        o = Object.mapKeys a # shallow clone
+        delete o[k] for k of b
+        o
+
 
     Promise:
       type: (v)-> v instanceof Promise
