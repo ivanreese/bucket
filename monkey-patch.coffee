@@ -126,6 +126,14 @@ do ()->
       clip: (v, ...[min = 0], max = 1)-> Math.min max, Math.max min, v
       sat: (v) -> Math.clip v
 
+      # Like Math.sin, but for a square wave with adjustable smoothing
+      square: (t, smoothness = 0)-> # Resembles a sine wave for values above 1
+        sharpness = 1 / smoothness
+        if sharpness is Infinity
+          Math.sign Math.sin t
+        else
+          Math.atan(Math.sin(t) * sharpness) / Math.atan(sharpness)
+
       lerpN: (input, outputMin = 0, outputMax = 1, clip = false)->
         input *= outputMax - outputMin
         input += outputMin
