@@ -27,6 +27,11 @@ do ()->
       clone: (arr)->
         arr.map Function.clone
 
+      cycle: (arr)->
+        next = arr.shift()
+        arr.push next
+        next
+
       empty: (arr)->
         not arr? or arr.length is 0
 
